@@ -1,15 +1,16 @@
-﻿# 1) Build stage
+# 1) Build stage
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 
 ARG Configuration=Release
 WORKDIR /src
 
 # copy csproj and restore as separate layer
-COPY ["test_api.csproj", "./"]
-RUN dotnet restore "./test_api.csproj"
+COPY ["test_api/test_api.csproj", "test_api/"]
+RUN dotnet restore "test_api/test_api.csproj"
 
 # copy everything else and build/publish
-COPY . .
+COPY test_api/. ./test_api/
+WORKDIR /src/test_api
 RUN dotnet publish "test_api.csproj" -c $Configuration -o /app/publish --no-restore
 
 # 2) Runtime stage
